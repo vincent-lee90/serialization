@@ -1,0 +1,29 @@
+{
+  "name": "serialize",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "babel src --out-dir lib --extensions '.ts' "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-typescript": "^7.9.0",
+    "catbuffer-typescript": "0.0.11",
+    "js-joda": "^1.11.0",
+    "long": "^4.0.0",
+    "tweetnacl": "^1.0.3",
+    "utf8": "^3.0.0"
+  },
+  "description": "",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "babel-preset-env": "^1.7.0"
+  }
+}
