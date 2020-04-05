@@ -27,6 +27,9 @@ import { Message } from './Message';
 import { Mosaic } from './Mosaic';
 import { NamespaceId } from './NamespaceId';
 import { TransactionVersion } from './TransactionVersion';
+import { InnerTransaction } from './InnerTransaction';
+import { PlainMessage } from './PlainMessage';
+import { EncryptedMessage } from './EncryptedMessage';
 
 export class TransferTransaction extends Transaction {
   constructor(networkType?: NetworkType,
@@ -66,8 +69,40 @@ export class TransferTransaction extends Transaction {
       message);
   }
 
-
-
+  /**
+     * Create a transaction object from payload
+     * @param {string} payload Binary payload
+     * @param {Boolean} isEmbedded Is embedded transaction (Default: false)
+     * @returns {Transaction | InnerTransaction}
+     */
+  public static createFromPayload(payload: string,
+    isEmbedded: boolean = false): Transaction | InnerTransaction {
+    const builder = isEmbedded ? EmbeddedTransferTransactionBuilder.loadFromBinary(Convert.hexToUint8(payload)) :
+      TransferTransactionBuilder.loadFromBinary(Convert.hexToUint8(payload));
+    const messageType = builder.getMessage()[0];
+    const messageHex = Convert.uint8ToHex(builder.getMessage()).substring(2);
+    const signerPublicKey = Convert.uint8ToHex(builder.getSignerPublicKey().key);
+    const networkType = builder.getNetwork().valueOf();
+    const transaction = TransferTransaction.create(
+      isEmbedded ? Deadline.create() : Deadline.createFromDTO(
+        (builder as TransferTransactionBuilder).getDeadline().timestamp),
+      UnresolvedMapping.toUnresolvedAddress(Convert.uint8ToHex(builder.getRecipientAddress().unresolvedAddress)),
+      builder.getMosaics().map((mosaic) => {
+        const id = new UInt64(mosaic.mosaicId.unresolvedMosaicId).toHex();
+        return new Mosaic(
+          UnresolvedMapping.toUnresolvedMosaic(id),
+          new UInt64(mosaic.amount.amount));
+      }),
+      messageType === MessageType.PlainMessage ?
+        PlainMessage.createFromPayload(messageHex) :
+        EncryptedMessage.createFromPayload(messageHex),
+      networkType,
+      isEmbedded ? new UInt64([0, 0]) : new UInt64((builder as TransferTransactionBuilder).fee.amount),
+    );
+ /*    return isEmbedded ?
+      transaction.toAggregate(PublicAccount.createFromPublicKey(signerPublicKey, networkType)) : transaction; */
+      return transaction
+  }
 
   protected generateBytes(): Uint8Array {
     const signerBuffer = new Uint8Array(32);

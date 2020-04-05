@@ -105,5 +105,19 @@ export class Convert {
 
     return output;
   }
-
+     /**
+     * Reversed convertion hex string to a uint8 array.
+     * @param {string} input A hex encoded string.
+     * @returns {Uint8Array} A uint8 array corresponding to the input.
+     */
+    public static hexToUint8Reverse = (input: string): Uint8Array => {
+      if (0 !== input.length % 2) {
+          throw Error(`hex string has unexpected size '${input.length}'`);
+      }
+      const output = new Uint8Array(input.length / 2);
+      for (let i = 0; i < input.length; i += 2) {
+          output[output.length - 1 - (i / 2)] = Convert.toByte(input[i], input[i + 1]);
+      }
+      return output;
+  }
 }

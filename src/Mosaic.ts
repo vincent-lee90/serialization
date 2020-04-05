@@ -33,7 +33,7 @@ export class Mosaic {
                 /**
                  * The mosaic id
                  */
-                public readonly id: MosaicId,
+                public readonly id: MosaicId|any,
                 /**
                  * The mosaic amount. The quantity is always given in smallest units for the mosaic
                  * i.e. if it has a divisibility of 3 the quantity is given in millis.

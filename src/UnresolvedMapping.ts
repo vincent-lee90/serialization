@@ -19,6 +19,7 @@ import { Address } from "./Address";
 import { Convert } from "./Convert";
 import { RawAddress } from "./format";
 import { NamespaceId } from "./NamespaceId";
+import { MosaicId } from "./MosaicId";
 
 
 /**
@@ -33,5 +34,48 @@ export class UnresolvedMapping {
             // received recipient address
             return RawAddress.stringToAddress((unresolvedAddress as Address).plain());
         }
+    }
+
+       /**
+     * Map unresolved address string to Address or NamespaceId
+     * @param {string} address The unresolved address in hex
+     * @returns {Address | NamespaceId}
+     */
+    public static toUnresolvedAddress(address: string): Address | NamespaceId {
+        if (!Convert.isHexString(address)) {
+            throw new Error('Input string is not in valid hexadecimal notation.');
+        }
+        // If bit 0 of byte 0 is not set (like in 0x90), then it is a regular address.
+        // Else (e.g. 0x91) it represents a namespace id which starts at byte 1.
+        const bit0 = Convert.hexToUint8(address.substr(1, 2))[0];
+        if ((bit0 & 16) === 16) {
+            // namespaceId encoded hexadecimal notation provided
+            // only 8 bytes are relevant to resolve the NamespaceId
+            const relevantPart = address.substr(2, 16);
+            return NamespaceId.createFromEncoded(Convert.uint8ToHex(Convert.hexToUint8Reverse(relevantPart)));
+        }
+
+        // read address from encoded hexadecimal notation
+        return Address.createFromEncoded(address);
+    }
+    /**
+     * @internal
+     * Map unresolved mosaic string to MosaicId or NamespaceId
+     * @param {string} mosaicId The unresolvedMosaic id in hex.
+     * @returns {MosaicId | NamespaceId}
+     */
+    public static toUnresolvedMosaic(mosaicId: string): MosaicId | NamespaceId {
+        if (!Convert.isHexString(mosaicId)) {
+            throw new Error('Input string is not in valid hexadecimal notation.');
+        }
+        const bytes = Convert.hexToUint8(mosaicId);
+        const byte0 = bytes[0];
+
+        // if most significant bit of byte 0 is set, then we have a namespaceId
+        if ((byte0 & 128) === 128) {
+            return NamespaceId.createFromEncoded(mosaicId);
+        }
+        // most significant bit of byte 0 is not set => mosaicId
+        return new MosaicId(mosaicId);
     }
 }

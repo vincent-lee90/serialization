@@ -136,4 +136,7 @@ let networkType=152
 let generationHash='44D2225B8932C9A96DCB13508CBCDFFA9A9663BFBA2354FEEC8FCFCB7E19846C'
 let transferTransaction = TransferTransaction.create(deadline,recipientAddress,mosaics,message,networkType)
 const payload = transferTransaction.serialize(account,generationHash)
-console.log(payload) 
+console.log(payload)
+let _transaction=TransferTransaction.createFromPayload(payload,false)
+console.log(_transaction)
+ 
