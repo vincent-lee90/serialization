@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import { NetworkType } from "./NetworkType";
+import { Convert } from "./Convert";
+import { RawAddress } from "./format";
+
 
 /**
  * The address structure describes an address with its network
@@ -105,7 +109,7 @@ export class Address {
      * @param address
      * @param networkType
      */
-    private constructor(/**
+     constructor(/**
                          * The address value.
                          */
                         private readonly address: string,

@@ -70,7 +70,7 @@ export class Deadline {
     /**
      * @param deadline
      */
-    private constructor(deadline: LocalDateTime) {
+     constructor(deadline: LocalDateTime) {
         this.value = deadline;
     }
 

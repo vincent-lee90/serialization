@@ -44,7 +44,7 @@ export class NamespaceId {
             this.id = new Id(id);
         } else if (typeof id === 'string') {
             this.fullName = id;
-            this.id = new Id(NamespaceMosaicIdGenerator.namespaceId(id));
+            //this.id = new Id(NamespaceMosaicIdGenerator.namespaceId(id));
         }
     }
 

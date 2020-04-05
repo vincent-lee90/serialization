@@ -25,7 +25,7 @@ import { NamespaceId } from "./NamespaceId";
  * @internal
  */
 export class UnresolvedMapping {
-    public static toUnresolvedAddressBytes(unresolvedAddress: Address, networkType: NetworkType): Uint8Array {
+    public static toUnresolvedAddressBytes(unresolvedAddress: Address|NamespaceId, networkType: NetworkType): Uint8Array {
         if (unresolvedAddress instanceof NamespaceId) {
             // received hexadecimal notation of namespaceId (alias)
             return RawAddress.aliasToRecipient(Convert.hexToUint8((unresolvedAddress as NamespaceId).toHex()), networkType);

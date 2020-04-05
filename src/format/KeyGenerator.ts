@@ -15,7 +15,7 @@
  */
 
 import { sha3_256 } from 'js-sha3';
-import { UInt64 } from '../../model/UInt64';
+import { UInt64 } from '../UInt64';
 
 export class KeyGenerator {
     /**

@@ -1,4 +1,13 @@
 import { TransferTransaction } from "./TransferTransaction"
+import { Deadline } from "./Deadline"
+import { LocalDateTime} from "js-joda"
+import { Address } from "./Address"
+import { Mosaic } from "./Mosaic"
+import { UInt64 } from "./UInt64"
+import { Message } from "./Message"
+import { NetworkType } from "./NetworkType"
+import { Convert } from "./Convert"
+import { MosaicId } from "./MosaicId"
 
 const transactionJson = {
   "type": 16724,
@@ -98,8 +107,33 @@ const account = {
     }
   }
 }
-const isObject=(prop)=>{
+const isObject = (prop) => {
   return typeof prop === 'object'
 }
-let transferTransaction=new TransferTransaction();
-const payload=transferTransaction.serialize()
+let x = 1;
+//initDeadline
+let deadline=new Deadline(LocalDateTime.now());
+//initRecipientAddress
+let recipientAddress=new Address(transactionJson.recipientAddress.address,transactionJson.recipientAddress.networkType)
+//initMosaics
+let mosaics:Mosaic[]=[];
+transactionJson.mosaics.forEach((mosaic)=>{
+  const mosaicId=new MosaicId(mosaic.id)
+  const _mosaic=new Mosaic(mosaicId,UInt64.fromNumericString(mosaic.amount));
+  mosaics.push(_mosaic)
+})
+let message:Message={
+  type:transactionJson.message.type,
+  payload:transactionJson.message.payload,
+  toDTO:()=>{
+    return {
+      type:transactionJson.message.type,
+      payload:transactionJson.message.payload
+    }
+  }
+}
+let networkType=152
+let generationHash='44D2225B8932C9A96DCB13508CBCDFFA9A9663BFBA2354FEEC8FCFCB7E19846C'
+let transferTransaction = TransferTransaction.create(deadline,recipientAddress,mosaics,message,networkType)
+const payload = transferTransaction.serialize(account,generationHash)
+console.log(payload) 

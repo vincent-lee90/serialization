@@ -25,6 +25,8 @@ import { TransactionInfo } from './TransactionInfo';
 import { PublicAccount } from './PublicAccount';
 import { Message } from './Message';
 import { Mosaic } from './Mosaic';
+import { NamespaceId } from './NamespaceId';
+import { TransactionVersion } from './TransactionVersion';
 
 export class TransferTransaction extends Transaction {
   constructor(networkType?: NetworkType,
@@ -34,11 +36,11 @@ export class TransferTransaction extends Transaction {
     /**
      * The address of the recipient address.
      */
-    public readonly recipientAddress?: Address,
+    public readonly recipientAddress?: Address | NamespaceId,
     /**
      * The array of Mosaic objects.
      */
-    public readonly mosaics?: any[],
+    public readonly mosaics?: Mosaic[],
     /**
      * The transaction message of 2048 characters.
      */
@@ -48,6 +50,20 @@ export class TransferTransaction extends Transaction {
     transactionInfo?: TransactionInfo) {
     super(TransactionType.TRANSFER, networkType, version, deadline, maxFee, signature, signer, transactionInfo);
     this.validate();
+  }
+  public static create(deadline: Deadline,
+    recipientAddress: Address | NamespaceId,
+    mosaics: Mosaic[],
+    message: Message,
+    networkType: NetworkType,
+    maxFee: UInt64 = new UInt64([0, 0])): TransferTransaction {
+    return new TransferTransaction(networkType,
+      TransactionVersion.TRANSFER,
+      deadline,
+      maxFee,
+      recipientAddress,
+      mosaics,
+      message);
   }
 
 

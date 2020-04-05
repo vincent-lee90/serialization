@@ -54,8 +54,7 @@ export abstract class Transaction {
      */
     public readonly transactionInfo?: TransactionInfo) {
   }
-  serialize(account, generationHash) {
-    generationHash = '44D2225B8932C9A96DCB13508CBCDFFA9A9663BFBA2354FEEC8FCFCB7E19846C'
+  serialize(account, generationHash?) {
     const generationHashBytes = Array.from(Convert.hexToUint8(generationHash));
     const byteBuffer = Array.from(this.generateBytes());
     const signingBytes = this.getSigningBytes(byteBuffer, generationHashBytes);
